@@ -1,17 +1,35 @@
+import { json } from "@remix-run/node";
+import { createEmptyContact, getContacts } from "./data";
 import {
   Form,
+  Link,
   Links,
   Meta,
+  Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 import appStylesHref from "./app.css?url";
+import { getContacts } from "./data";
+
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: appStylesHref },
 ];
 
+export const loader = async () => {
+  const contacts = await getContacts();
+  return json({ contacts });
+};
+export const action = async () => {
+  const contact = await createEmptyContact();
+  return json({ contact });
+};
+
 export default function App() {
+  const { contacts } = useLoaderData<typeof loader>();
+
   return (
     <html lang="en">
       <head>
@@ -40,16 +58,33 @@ export default function App() {
           </div>
           <nav>
             <ul>
-              <li>
-                <a href={`/contacts/1`}>Your Name</a>
-              </li>
-              <li>
-                <a href={`/contacts/2`}>Your Friend</a>
-              </li>
+              {contacts.map((contact) => (
+                <li key={contact.id}>
+                  <Link to={`/contacts/${contact.id}`}>
+                    {contact.first || contact.last ? (
+                      <>
+                        {contact.first} {contact.last}
+                      </>
+                    ) : (
+                      <i>No Name</i>
+                    )}{" "}
+                    {contact.favorite ? (
+                      <span>{`\u2605`} </span>
+                    ) : null}
+                  </Link>
+                </li>
+              ))}
+              {contacts.length === 0 && (
+                <p>
+                  <i>No contacts</i>
+                </p>
+              )}
             </ul>
           </nav>
         </div>
-
+        <div id="detail">
+          <Outlet />
+        </div>
         <ScrollRestoration />
         <Scripts />
       </body>
