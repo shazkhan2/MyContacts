@@ -45,7 +45,7 @@ export default function App() {
       <body>
         <div id="sidebar">
           <h1>Remix Contacts</h1>
-          <div>
+          <div id="top">
             <Form id="search-form" role="search">
               <input
                 id="q"
