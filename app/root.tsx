@@ -1,5 +1,5 @@
 import { json, redirect } from "@remix-run/node";
-import { createEmptyContact, getContacts } from "./data";
+import { createEmptyContact, getContacts } from "./data.server";
 import {
   Form,
   NavLink,
@@ -14,7 +14,6 @@ import {
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 import appStylesHref from "./app.css?url";
-import { getContacts } from "./data";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: appStylesHref },

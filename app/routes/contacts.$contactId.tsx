@@ -5,8 +5,8 @@ import type { FunctionComponent } from "react";
 import invariant from "tiny-invariant";
 
 
-import type { ContactRecord } from "../data";
-import { getContact } from "../data";
+import type { ContactRecord } from "../data.server";
+import { getContact } from "../data.server";
 
 export const loader = async ({ 
     params, 
@@ -52,7 +52,9 @@ export default function Contact() {
               {contact.twitter}
             </a>
           </p>
+          
         ) : null}
+        {contact.comment ?  <div><h4>Comment</h4><p>{contact.comment} </p></div> : null}
 
         {contact.notes ? <p>{contact.notes}</p> : null}
 
