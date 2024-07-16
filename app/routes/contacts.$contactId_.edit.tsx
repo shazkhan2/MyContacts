@@ -1,24 +1,9 @@
-import type { 
-    ActionFunctionArgs,
-    LoaderFunctionArgs }
-    from "@remix-run/node";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useLoaderData, useNavigate, } from "@remix-run/react";
+import { Form, useActionData, useLoaderData, useNavigate } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { getContact, updateContact } from "../data.server";
-
-export const action = async ({
-    params,
-    request,
-  }: ActionFunctionArgs) => {
-    invariant(params.contactId, "Missing contactId param");
-    const formData = await request.formData();
-    const updates = Object.fromEntries(formData);
-    console.log(updates);
-    await updateContact(params.contactId, updates);
-    return redirect(`/contacts/${params.contactId}`);
-  };
+import { getContact, updateContactById } from "../data.server";
 
 export const loader = async ({
   params,
@@ -31,8 +16,24 @@ export const loader = async ({
   return json({ contact });
 };
 
+export const action = async ({ params, request }: ActionFunctionArgs) => {
+    invariant(params.contactId, "Missing contactId param");
+    const formData = await request.formData();
+    const data = Object.fromEntries(formData);
+    
+    const updateResponse = await updateContactById(params.contactId, data);
+    
+    if (updateResponse.error) return json({
+        data: null,
+        error: updateResponse.error,
+    })
+
+return redirect("/contacts/" + params.contactId)
+}
+
 export default function EditContact() {
   const { contact } = useLoaderData<typeof loader>();
+  const formResponse = useActionData<typeof action>();
   const navigate = useNavigate();
 
 
@@ -84,8 +85,7 @@ export default function EditContact() {
       </label>
       <p>
         <button type="submit">Save</button>
-        <button onClick={() => navigate(-1)} type="button">
-Cancel</button>
+        <button type="button" onClick={() => navigate(-1)}>Cancel</button>
       </p>
     </Form>
   );

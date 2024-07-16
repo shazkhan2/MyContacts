@@ -58,29 +58,75 @@ export async function getContacts(query?: string | null) {
   const response = await fetch(url + "/api/contacts");
   const data = await response.json();
   const flattenAttributesData = flattenAttributes(data.data);
-  return flattenAttributesData
+  return flattenAttributesData;
 
  } catch (error) {
  console.log(error);
 }
- {
-
- }
+ 
   }
   
 
-export async function createEmptyContact() {
+export async function createContact(data:any) {
+  try {
+    const response = await fetch(url + "/api/contacts/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({data: {...data}})
+    });
+    const responseData = await response.json();
+    const flattenAttributesData = flattenAttributes(responseData.data);
+    return flattenAttributesData;
   
+   } catch (error) {
+   console.log(error);
+   }
 }
 
 export async function getContact(id: string) {
+  try {
+    const response = await fetch(url + "/api/contacts/" + id);
+    const data = await response.json();
+    const flattenAttributesData = flattenAttributes(data.data);
+    return flattenAttributesData;
+  
+   } catch (error) {
+   console.log(error);
+   }
 }
 
-export async function updateContact(id: string, updates: ContactMutation) {
+export async function updateContactById(id: string, updates: ContactMutation) {
+  try {
+    const response = await fetch(url + "/api/contacts/" +id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({data: {...updates}})
+    });
+    const responseData = await response.json();
+    const flattenAttributesData = flattenAttributes(responseData.data);
+    return flattenAttributesData;
   
+   } catch (error) {
+   console.log(error);
+   }
 }
 
 export async function deleteContact(id: string) {
+  try {
+    const response = await fetch(url + "/api/contacts" +id, {
+      method: "DELETE",
+    });
+    const data = await response.json();
+    const flattenAttributesData = flattenAttributes(data.data);
+    return flattenAttributesData;
+  
+   } catch (error) {
+   console.log(error);
+  }
 }
 
 const data = [

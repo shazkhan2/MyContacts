@@ -45,6 +45,21 @@ button {
   font-weight: 500;
 }
 
+.buttonLink {
+  color: #3992ff;
+  font-weight: 500;
+  font-size: 1rem;
+  font-family: inherit;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 0px 1px hsla(0, 0%, 0%, 0.2), 0 1px 2px hsla(0, 0%, 0%, 0.2);
+  background-color: white;
+  line-height: 1.5;
+  margin: 0;
+  text-decoration: none;
+}
+
 textarea:hover,
 input:hover,
 button:hover {
@@ -396,25 +411,4 @@ i {
   justify-content: center;
   width: 100%;
 }
-/* 
-@media screen and (min-width: 375px) {
-  body {
-    flex-direction: row;
 
-  }
-  #sidebar {
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    width: 100%;
-    order: 1;
-  }
-  
-  
-  #detail {
-    order: 2;
-    width: 100%;
-    flex-direction: row;
-
-  }
-} */

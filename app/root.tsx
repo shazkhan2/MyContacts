@@ -1,5 +1,5 @@
 import { json, redirect } from "@remix-run/node";
-import { createEmptyContact, getContacts } from "./data.server";
+import { createContact, getContacts } from "./data.server";
 import {
   Form,
   NavLink,
@@ -10,7 +10,9 @@ import {
   ScrollRestoration,
   useLoaderData,
   useNavigation,
-
+  Link,
+  isRouteErrorResponse,
+  useRouteError
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 import appStylesHref from "./app.css?url";
@@ -23,10 +25,34 @@ export const loader = async () => {
   const contacts = await getContacts();
   return json({ contacts });
 };
-export const action = async () => {
-  const contact = await createEmptyContact();
-  return redirect(`/contacts/${contact.id}/edit`);
-};
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  console.error(error);
+  return (
+    <html>
+      <head>
+        <title>Oh no!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <h1>
+          {isRouteErrorResponse(error)
+          ?`${error.status} ${error.statusText}`
+          : error instanceof Error
+          ? error.message
+          :"Unknown Error" }
+        </h1>
+
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+
+
 
 export default function App() {
   const { contacts } = useLoaderData<typeof loader>();
@@ -55,9 +81,7 @@ export default function App() {
               />
               <div id="search-spinner" aria-hidden hidden={true} />
             </Form>
-            <Form method="post">
-              <button type="submit">New</button>
-            </Form>
+            <Link to="contacts/create" className="buttonLink">Create</Link>
           </div>
           <nav>
             <ul>
