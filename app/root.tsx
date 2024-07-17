@@ -1,63 +1,82 @@
-import { json, redirect } from "@remix-run/node";
-import { createContact, getContacts } from "./data.server";
+import {
+  json,
+  type LoaderFunctionArgs,
+  type LinksFunction,
+} from "@remix-run/node";
+
+import { useEffect } from "react";
+
 import {
   Form,
-  NavLink,
   Links,
-  Meta,
+  Link,
+  LiveReload,
   Outlet,
+  Meta,
   Scripts,
   ScrollRestoration,
   useLoaderData,
-  useNavigation,
-  Link,
+  useRouteError,
   isRouteErrorResponse,
-  useRouteError
+  useSubmit,
+  useNavigation,
+  NavLink,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
-import appStylesHref from "./app.css?url";
 
+import appStylesHref from "./app.css";
+import { getContacts } from "./data.server";
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: appStylesHref },
 ];
 
-export const loader = async () => {
-  const contacts = await getContacts();
-  return json({ contacts });
-};
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const q = url.searchParams.get("q");
+  const contacts = await getContacts(q);
+  console.log(contacts)
+  return json({ contacts, q });
+}
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  console.error(error);
+  console.dir(error, { depth: null });
+
   return (
     <html>
       <head>
-        <title>Oh no!</title>
+        <title>Oops!</title>
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="root-error">
         <h1>
           {isRouteErrorResponse(error)
-          ?`${error.status} ${error.statusText}`
-          : error instanceof Error
-          ? error.message
-          :"Unknown Error" }
+            ? `${error.status} ${error.statusText || error.data}`
+            : error instanceof Error
+            ? error.message
+            : "Unknown Error"}
         </h1>
-
         <Scripts />
       </body>
     </html>
   );
 }
 
-
-
-
 export default function App() {
-  const { contacts } = useLoaderData<typeof loader>();
+  const { contacts, q } = useLoaderData<typeof loader>();
+  const submit = useSubmit();
   const navigation = useNavigation();
 
+  const searching =
+    navigation.location &&
+    new URLSearchParams(navigation.location.search).has("q");
+
+  useEffect(() => {
+    const searchField = document.getElementById("q");
+    if (searchField instanceof HTMLInputElement) {
+      searchField.value = q || "";
+    }
+  }, [q]);
 
   return (
     <html lang="en">
@@ -70,64 +89,69 @@ export default function App() {
       <body>
         <div id="sidebar">
           <h1>Remix Contacts</h1>
-          <div id="top">
-            <Form id="search-form" role="search">
+          <div>
+            <Form
+              id="search-form"
+              role="search"
+              onChange={(event) => {
+                const isFirstSearch = q === null;
+                submit(event.currentTarget, {
+                  replace: !isFirstSearch,
+                });
+              }}
+            >
               <input
                 id="q"
+                className={searching ? "loading" : ""}
                 aria-label="Search contacts"
                 placeholder="Search"
                 type="search"
                 name="q"
+                defaultValue={q || ""}
               />
-              <div id="search-spinner" aria-hidden hidden={true} />
+              <div id="search-spinner" aria-hidden hidden={!searching} />
             </Form>
-            <Link to="contacts/create" className="buttonLink">Create</Link>
+            <Link to="contacts/create" className="buttonLink">
+              Create
+            </Link>
           </div>
           <nav>
-            <ul>
-              {contacts.map((contact) => (
-                <li key={contact.id}>
-                   <NavLink
-                  className={({ isActive, isPending }) =>
-                    isActive
-                      ? "active"
-                      : isPending
-                      ? "pending"
-                      : ""
-                  }
-                  to={`contacts/${contact.id}`}
-                >
-                    {contact.first || contact.last ? (
-                      <>
-                        {contact.first} {contact.last}
-                      </>
-                    ) : (
-                      <i>No Name</i>
-                    )}{" "}
-                    {contact.favorite ? (
-                      <span>{`\u2605`} </span>
-                    ) : null}
-                  </NavLink>
-                </li>
-              ))}
-              {contacts.length === 0 && (
-                <p>
-                  <i>No contacts</i>
-                </p>
-              )}
-            </ul>
+            {contacts.length ? (
+              <ul>
+                {contacts.map((contact: any) => (
+                  <li key={contact.id}>
+                    <NavLink to={`contacts/${contact.id}`}
+                      className={({isActive, isPending}) => 
+                      isActive ? "active" : isPending ? "pending" : ""
+                    }
+                    >
+                      {contact.first || contact.last ? (
+                        <>
+                          {contact.first} {contact.last}
+                        </>
+                      ) : (
+                        <i>No Name</i>
+                      )}
+                      {contact.favorite ? <span>★</span> : null}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>
+                <i>No contacts</i>
+              </p>
+            )}
           </nav>
         </div>
-        <div 
-          className={
-            navigation.state === "loading" ? "loading" : ""
-          }
-        id="detail"
-        >
+
+        <div id="detail">
           <Outlet />
         </div>
+
         <ScrollRestoration />
         <Scripts />
+        <LiveReload />
       </body>
     </html>
   );
