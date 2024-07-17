@@ -36,14 +36,17 @@ export function ErrorBoundary() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="root-error">
         <h1>
+          Oops, that didnt work
+        </h1>
+        <p>
           {isRouteErrorResponse(error)
           ?`${error.status} ${error.statusText}`
           : error instanceof Error
           ? error.message
           :"Unknown Error" }
-        </h1>
+        </p>
 
         <Scripts />
       </body>

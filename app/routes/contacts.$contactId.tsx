@@ -1,26 +1,14 @@
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
 import {json, redirect } from "@remix-run/node";
-import { Form, useActionData, useLoaderData, useNavigate, useRouteError, useFetcher,
+import { 
+  Form, useActionData, useLoaderData, useNavigate, useRouteError, 
+  useFetcher, isRouteErrorResponse
 } from "@remix-run/react";
 import invariant from "tiny-invariant";
+import type { FunctionComponent } from "react";
+import type { ContactRecord } from "../data.server";
 
 import { getContact, updateContactById } from "../data.server";
-
-// import {
-//   Form,
-//   useLoaderData,
-//   useRouteError,
-//   isRouteErrorResponse,
-//   useNavigate,
-//   useFetcher,
-// } from "@remix-run/react";
-
-// import { type ActionFunctionArgs, json, type LoaderFunctionArgs } from "@remix-run/node";
-// import invariant from "tiny-invariant";
-// import { getContact, updateContactById } from "../data.server";
-// import type { FunctionComponent } from "react";
-// import type { ContactRecord } from "../data.server";
-
 
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -80,7 +68,8 @@ export default function Contact() {
             </>
           ) : (
             <i>No Name</i>
-          )}{" "}
+          )}
+          {" "}
           <Favorite contact={contact} />
         </h1>
 
