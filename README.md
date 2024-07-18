@@ -1,38 +1,34 @@
-# Welcome to Remix!
+# CRUD Operations on Contacts
 
-- [Remix Docs](https://remix.run/docs)
+This project implements CRUD (Create, Read, Update, Delete) operations on contacts with the following features:
 
-## Development
+1. **Remix Routing**
+   - Implemented routing for navigation within the application.
 
-From your terminal:
+2. **Nested Routes and Outlets**
+   - Utilized nested routes and outlets to structure the application.
 
-```sh
-npm run dev
-```
+3. **Dynamic Routes**
+   - Integrated dynamic routes for handling individual contact details.
 
-This starts your app in development mode, rebuilding assets on file changes.
+4. **Loader and Action Functions**
+   - Created loader functions for fetching data and action functions for data mutations.
 
-## Deployment
+5. **Full CRUD Functionality**
+   - Enabled full CRUD operations: Create, Read, Update, and Delete contacts.
 
-First, build your app for production:
+6. **Form Validation with Zod**
+   - Added validation for form inputs using Zod to ensure data integrity.
 
-```sh
-npm run build
-```
+7. **Remix Form Submission and useFetcher Function**
+   - Utilized Remix's form submission mechanism and `useFetcher` function for handling form actions.
 
-Then run the app in production mode:
+8. **Error Handling with Error Boundaries**
+   - Implemented error boundaries to manage and display errors gracefully.
 
-```sh
-npm start
-```
 
-Now you'll need to pick a host to deploy it to.
 
-### DIY
+![Main](image.png)
+![Search](image-1.png)
+![Create new](image-2.png)
 
-If you're familiar with deploying node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `remix build`
-
-- `build/server`
-- `build/client`
