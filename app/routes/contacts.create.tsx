@@ -33,7 +33,6 @@ export default function CreateContact(data:any) {
     
   const navigate = useNavigate();
   const formData = useActionData<typeof action>();
-  console.log(formData, "data from action")
 
   return (
     <Form method="post">
@@ -73,8 +72,9 @@ export default function CreateContact(data:any) {
       <div>
         <label>
           <span>Notes</span>
-          <textarea name="note" rows={6} />
+          <textarea name="notes" rows={6} />
         </label>
+        
       </div>
 
       <div className="button-group">
