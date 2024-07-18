@@ -1,3 +1,5 @@
+import { json, type LoaderFunctionArgs, type LinksFunction, redirect } from "@remix-run/node";
+import { createContact, getContacts } from "./data.server";
 import {
   json,
   type LoaderFunctionArgs,
@@ -18,6 +20,10 @@ import {
   useLoaderData,
   useRouteError,
   isRouteErrorResponse,
+  useRouteError,
+  useSubmit,
+} from "@remix-run/react";
+import appStylesHref from "./app.css?url";
   useSubmit,
   useNavigation,
   NavLink,
@@ -50,7 +56,16 @@ export function ErrorBoundary() {
       </head>
       <body className="root-error">
         <h1>
+          Oops, that didnt work
+        </h1>
+        <p>
           {isRouteErrorResponse(error)
+          ?`${error.status} ${error.statusText}`
+          : error instanceof Error
+          ? error.message
+          :"Unknown Error" }
+        </p>
+
             ? `${error.status} ${error.statusText || error.data}`
             : error instanceof Error
             ? error.message
@@ -66,6 +81,17 @@ export default function App() {
   const { contacts, q } = useLoaderData<typeof loader>();
   const submit = useSubmit();
   const navigation = useNavigation();
+  const searching = navigation.location && new URLSearchParams(
+    navigation.location.search
+  ).has("q");
+  const submit = useSubmit();
+  useEffect( () => {
+    const searchField = document.getElementById("q");
+    if (searchField instanceof HTMLInputElement) {
+      searchField.value= q || ""
+    }
+  }, [q])
+
 
   const searching =
     navigation.location &&
@@ -89,6 +115,21 @@ export default function App() {
       <body>
         <div id="sidebar">
           <h1>Remix Contacts</h1>
+          <div id="top">
+
+            <Form id="search-form" role="search" 
+            onChange={(event) => {
+              const isFirstSearch = q === null;
+             submit(event.currentTarget, {
+              replace: !isFirstSearch,
+             });
+            }}
+            >
+            
+              <input
+                id="q"
+                className={searching ? "loading" : "" }
+
           <div>
             <Form
               id="search-form"

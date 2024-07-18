@@ -411,4 +411,13 @@ i {
   justify-content: center;
   width: 100%;
 }
+.root-error {
+  background: red;
+  color: white;
+  margin: 4rem;
+}
+
+.contact-error {
+  padding: 6rem;
+}
 

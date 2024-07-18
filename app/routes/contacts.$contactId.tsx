@@ -1,3 +1,16 @@
+import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
+import {json, redirect } from "@remix-run/node";
+import { 
+  Form, useActionData, useLoaderData, useNavigate, useRouteError, 
+  useFetcher, isRouteErrorResponse
+} from "@remix-run/react";
+import invariant from "tiny-invariant";
+import type { FunctionComponent } from "react";
+import type { ContactRecord } from "../data.server";
+
+import { getContact, updateContactById } from "../data.server";
+
+
 import {
   Form,
   useLoaderData,
@@ -71,7 +84,8 @@ export default function Contact() {
             </>
           ) : (
             <i>No Name</i>
-          )}{" "}
+          )}
+          {" "}
           <Favorite contact={contact} />
         </h1>
 

@@ -56,6 +56,26 @@ export function flattenAttributes(data: any): any {
   return flattened;
 }
 
+
+export async function getContacts(q: string | null) {
+  const query = qs.stringify({
+    filters: {
+      $or: [
+        { first: { $contains: q } },
+        { last: { $contains: q } },
+        { twitter: { $contains: q } },
+      ],
+    },
+    pagination: {
+      pageSize: 50,
+      page: 1,
+    },
+  });
+ try {
+  const response = await fetch(url + "/api/contacts?" +query);
+  const data = await response.json();
+  const flattenAttributesData = flattenAttributes(data.data);
+  return flattenAttributesData;
 const url = process.env.STRAPI_URL || "http://127.0.0.1:1337";
 
 export async function getContacts(q: string | null) {
@@ -139,6 +159,7 @@ export async function updateContactById(id: string, updates: ContactMutation) {
 
 export async function deleteContact(id: string) {
   try {
+    const response = await fetch(url + "/api/contacts/" +id, {
     const response = await fetch(url + "/api/contacts/" + id, {
       method: "DELETE",
     });

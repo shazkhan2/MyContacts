@@ -7,4 +7,7 @@ export const action = async ({ params } : ActionFunctionArgs ) => {
   await deleteContact(params.contactId);
   return redirect("/contacts")
 
+
+return redirect("/contacts"  )
+
 }
